@@ -6,5 +6,5 @@ pip install -r requirements.txt
 ```
 введіть наступну команду для запуску lab3 
 ```bash
-stremlit run lab3/lab3.py
+streamlit run lab3/lab3.py
 ```
