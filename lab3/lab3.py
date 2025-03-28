@@ -85,7 +85,7 @@ if data is not None:
         options = ['VCI', 'TCI', 'VHI']
         # key - ідентифікатор віджета (selectbox) у session_state
         # Він використовується для збереження стану віджета. Автоматично зберігається в session_state
-        selected_option = st.selectbox('Select Time Series:', options, key="selected_option")
+        selected_option = st.selectbox('Виберіть часовий ряд:', options, key="selected_option")
 
         # 2. Dropdown для вибору області
         if st.session_state["selected_PROVINCE_ID"] not in PROVINCE_IDs:
@@ -93,19 +93,19 @@ if data is not None:
 
         index = PROVINCE_IDs.index(st.session_state["selected_PROVINCE_ID"])
 
-        selected_PROVINCE_ID = st.selectbox('Select PROVINCE_ID:', PROVINCE_IDs, index=index, key="selected_PROVINCE_ID")
+        selected_PROVINCE_ID = st.selectbox('Виберіть регіон України:', PROVINCE_IDs, index=index, key="selected_PROVINCE_ID")
 
         # 3. Slider для вибору інтервалу тижнів
         min_week = data['Week'].min()
         max_week = data['Week'].max()
         
-        week_range = st.slider('Select week range:', min_week, max_week, (min_week, max_week), key="week_range")
+        week_range = st.slider('Виберіть проміжок тижнів:', min_week, max_week, (min_week, max_week), key="week_range")
 
         # 4. Slider для вибору інтервалу років
         min_year = data['Year'].min()
         max_year = data['Year'].max()
 
-        year_range = st.slider('Select year range:', min_year, max_year, (min_year, max_year), key="year_range")
+        year_range = st.slider('Виберіть проміжок років:', min_year, max_year, (min_year, max_year), key="year_range")
 
         # Фільтрація даних за обраними параметрами
         # знаходить для регіону відповідний номер, наприклад 1 для 'Вінницька'
@@ -119,11 +119,11 @@ if data is not None:
         ]
 
         # 8. Два checkbox для сортування даних
-        sort_asc = st.checkbox('Sort data in Ascending Order', key="sort_asc")
-        sort_desc = st.checkbox('Sort data in Descending Order', key="sort_desc")
+        sort_asc = st.checkbox('Сортування за зростанням', key="sort_asc")
+        sort_desc = st.checkbox('Сортування за спаданням', key="sort_desc")
 
         if sort_asc and sort_desc:
-            st.warning("Both sort options selected. Only ascending will be applied.")
+            st.warning("Обидва чек-бокси вибрано! Виберіть, будь ласка, один із них")
             sort_desc = False
         elif sort_asc:
             filtered_data = filtered_data.sort_values(by=st.session_state["selected_option"], ascending=True)
@@ -136,7 +136,7 @@ if data is not None:
     # Колонка 2
     with col2:
         # Tabs для таблиці та графіка з відфільтрованими даними, графіка порівнянь даних по областях
-        tab1, tab2, tab3 = st.tabs(["Filtered Data Table", "Time Series Plot", "PROVINCE Comparison"])
+        tab1, tab2, tab3 = st.tabs(["Таблиця з відсортованими даними", "Графік часових рядів", "Порівняння регіонів України"])
 
         #  Таблиця з відфільтрованими даними
         with tab1:
@@ -153,7 +153,7 @@ if data is not None:
             # Побудова лінійного графіку
             sns.lineplot(data=filtered_data, x="Year", y="Smoothed")
 
-            plt.title(f"Time Series {selected_option} (Smoothed) for {selected_PROVINCE_ID} PROVINCE")
+            plt.title(f"Часовиц ряд {selected_option} для регіону {selected_PROVINCE_ID} ")
             plt.xlabel("Year")
             plt.ylabel(selected_option)
 
@@ -187,9 +187,9 @@ if data is not None:
             plt.figure(figsize=(8, 7))
             plt.bar(comparison_data_grouped.index, comparison_data_grouped.values)
             plt.xticks(rotation=90)
-            plt.xlabel('PROVINCE')
-            plt.ylabel(f'Average {selected_option}')
-            plt.title(f'Average {selected_option} by PROVINCE')
+            plt.xlabel('Регіон')
+            plt.ylabel(f'Середнє {selected_option}')
+            plt.title(f'Середнє {selected_option} по регіонам')
             plt.tight_layout()
 
             # Виведення графіка на сторінці Streamlit
