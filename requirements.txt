@@ -7,3 +7,4 @@ streamlit
 ucimlrepo
 scipy
 scikit-learn
+bokeh
