@@ -13,12 +13,15 @@ params = {
     "window": 11
 }
 
+# === Дані ===
+time = np.linspace(0, 10, 1000)
+
 # === Генерація шуму та сигналу ===
 def generate_noise():
-    return np.random.normal(params["noise_mean"], np.sqrt(params["noise_cov"]), len(t))
+    return np.random.normal(params["noise_mean"], np.sqrt(params["noise_cov"]), len(time))
 
 def harmonic():
-    return params["amp"] * np.sin(2 * np.pi * params["freq"] * t + params["phase"])
+    return params["amp"] * np.sin(2 * np.pi * params["freq"] * time + params["phase"])
 
 def harmonic_with_noise(noise):
     return harmonic() + noise
@@ -31,21 +34,19 @@ def moving_average(signal, window_size):
         filtered[i] = np.mean(signal[start:end])
     return filtered
 
-# === Дані ===
-t = np.linspace(0, 10, 1000)
 noise = generate_noise()
 y_clean = harmonic()
 y_noisy = harmonic_with_noise(noise)
 y_filtered = moving_average(y_noisy, params["window"])
 
-source = ColumnDataSource(data=dict(x=t, y_clean=y_clean, y_noisy=y_noisy, y_filtered=y_filtered))
+source = ColumnDataSource(data=dict(x=time, y_clean=y_clean, y_noisy=y_noisy, y_filtered=y_filtered))
 
 # === Оновлення ===
 def update_signal(attr, old, new):
     y_clean = harmonic()
     y_noisy = harmonic_with_noise(noise)
     y_filtered = moving_average(y_noisy, int(params["window"]))
-    source.data = dict(x=t, y_clean=y_clean, y_noisy=y_noisy, y_filtered=y_filtered)
+    source.data = dict(x=time, y_clean=y_clean, y_noisy=y_noisy, y_filtered=y_filtered)
     update_visibility(None, None, None)
 
 def update_noise(attr, old, new):
