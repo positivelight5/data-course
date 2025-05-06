@@ -137,6 +137,9 @@ noise_sliders = {
 for slider, key in noise_sliders.items():
     slider.on_change('value', on_param_change(key, update_noise))
 
+# Додаємо подію для випадаючого списку
+visibility_select.on_change("value", update_visibility)
+
 # === Побудова графіків ===
 plot1 = figure(height=350, width=800, title="Сигнал з шумом та фільтром", x_axis_label="Час", y_axis_label="Амплітуда")
 line_clean = plot1.line('x', 'y_clean', source=source, color="blue", legend_label="Чистий")
