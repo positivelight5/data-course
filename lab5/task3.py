@@ -86,7 +86,7 @@ def on_param_change(param_name, update_fn):
     return callback
 
 def reset():
-    # Встановлення значень прямо всередині функції (без init_params)
+    # Встановлення значень прямо всередині функції
     params["amp"] = 1.0
     params["freq"] = 1.0
     params["phase"] = 0.0
