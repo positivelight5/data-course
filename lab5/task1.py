@@ -45,7 +45,7 @@ plt.subplots_adjust(left=0.25, bottom=0.45)
 ax.set_ylim(-2, 2)
 line_clean, = ax.plot(time, generate_clean(), 'b--', label='Signal')
 line_noisy, = ax.plot(time, generate_noisy(), 'orange', label='Noisy')
-ax.legend()
+ax.legend(loc='upper right')
 line_noisy.set_visible(False)
 
 # --- Слайдери ---

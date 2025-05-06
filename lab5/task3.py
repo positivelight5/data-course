@@ -26,13 +26,14 @@ def harmonic():
 def harmonic_with_noise(noise):
     return harmonic() + noise
 
-def moving_average(signal, window_size):
-    filtered = np.zeros_like(signal)
-    for i in range(len(signal)):
-        start = max(0, i - window_size // 2)
-        end = min(len(signal), i + window_size // 2 + 1)
-        filtered[i] = np.mean(signal[start:end])
-    return filtered
+def moving_average(data, window_size):
+    result = np.zeros_like(data, dtype=float)
+    half = window_size // 2
+    for i in range(len(data) - window_size + 1):
+        window = data[i:i + window_size]
+        avg = sum(window) / window_size
+        result[i + half] = avg  # результат записується в центр вікна
+    return result
 
 noise = generate_noise()
 y_clean = harmonic()
@@ -77,6 +78,13 @@ def update_visibility(attr, old, new):
         line_noise2.visible = False
         line_filtered2.visible = False
 
+    # === Обробник зміни параметра ===
+def on_param_change(param_name, update_fn):
+    def callback(attr, old, new):
+        params[param_name] = new
+        update_fn(attr, old, new)
+    return callback
+
 def reset():
     # Встановлення значень прямо всередині функції (без init_params)
     params["amp"] = 1.0
@@ -97,7 +105,7 @@ def reset():
     # Скидання режиму візуалізації
     visibility_select.value = "Сховати все"
 
-# === Віджети ===
+# === Слайдери ===
 amp_slider = Slider(title="Амплітуда", value=params["amp"], start=0.0, end=2.0, step=0.1)
 freq_slider = Slider(title="Частота", value=params["freq"], start=0.1, end=5.0, step=0.1)
 phase_slider = Slider(title="Фаза", value=params["phase"], start=0.0, end=2*np.pi, step=0.1)
@@ -109,14 +117,25 @@ visibility_select = Select(value="Сховати все", options=["Сховат
 reset_button = Button(label="Скинути", button_type="success")
 
 # === Події ===
-for slider, key in zip([amp_slider, freq_slider, phase_slider, window_slider], ["amp", "freq", "phase", "window"]):
-    slider.on_change('value', lambda attr, old, new, k=key: params.update({k: new}) or update_signal(attr, old, new))
+# === Події для слайдерів сигналу ===
+signal_sliders = {
+    amp_slider: "amp",
+    freq_slider: "freq",
+    phase_slider: "phase",
+    window_slider: "window"
+}
 
-for slider, key in zip([nmean_slider, ncov_slider], ["noise_mean", "noise_cov"]):
-    slider.on_change('value', lambda attr, old, new, k=key: params.update({k: new}) or update_noise(attr, old, new))
+for slider, key in signal_sliders.items():
+    slider.on_change('value', on_param_change(key, update_signal))
 
-visibility_select.on_change('value', update_visibility)
-reset_button.on_click(reset)
+# === Події для слайдерів шуму ===
+noise_sliders = {
+    nmean_slider: "noise_mean",
+    ncov_slider: "noise_cov"
+}
+
+for slider, key in noise_sliders.items():
+    slider.on_change('value', on_param_change(key, update_noise))
 
 # === Побудова графіків ===
 plot1 = figure(height=350, width=800, title="Сигнал з шумом та фільтром", x_axis_label="Час", y_axis_label="Амплітуда")
