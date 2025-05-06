@@ -115,6 +115,7 @@ window_slider = Slider(title="Розмір вікна фільтра", value=par
 
 visibility_select = Select(value="Сховати все", options=["Сховати все", "Тільки шум", "Тільки фільтр", "Шум і фільтр"])
 reset_button = Button(label="Скинути", button_type="success")
+reset_button.on_click(reset)
 
 # === Події ===
 # === Події для слайдерів сигналу ===
