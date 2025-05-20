@@ -29,10 +29,9 @@ def generate_clean_with_noise(noise):
 def moving_average(data, window_size):
     result = np.zeros_like(data, dtype=float)
     half = window_size // 2
-    for i in range(len(data) - window_size + 1):
-        window = data[i:i + window_size]
-        avg = sum(window) / window_size
-        result[i + half] = avg  # результат записується в центр вікна
+    for i in range(half, len(data) - half):
+        window = data[i - half:i + half + 1]
+        result[i] = np.mean(window)
     return result
 
 noise = generate_noise()
@@ -111,7 +110,7 @@ freq_slider = Slider(title="Частота", value=params["freq"], start=0.1, en
 phase_slider = Slider(title="Фаза", value=params["phase"], start=0.0, end=2*np.pi, step=0.1)
 nmean_slider = Slider(title="Середнє шуму", value=params["noise_mean"], start=-1.0, end=1.0, step=0.1)
 ncov_slider = Slider(title="Дисперсія шуму", value=params["noise_cov"], start=0.0, end=1.0, step=0.05)
-window_slider = Slider(title="Розмір вікна фільтра", value=params["window"], start=3, end=21, step=2)
+window_slider = Slider(title="Розмір вікна фільтра", value=params["window"], start=3, end=200, step=2)
 
 visibility_select = Select(value="Сховати все", options=["Сховати все", "Тільки шум", "Тільки фільтр", "Шум і фільтр"])
 reset_button = Button(label="Скинути", button_type="success")
