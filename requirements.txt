@@ -8,3 +8,4 @@ ucimlrepo
 scipy
 scikit-learn
 bokeh
+rasterio
